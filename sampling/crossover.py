@@ -1,5 +1,5 @@
 from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
-from utils import generate_text, trim_incomplete_response, extract_strings
+from sampling import generate_text, trim_incomplete_response, extract_strings
 
 
 def make_crossover_prompt(mother_text, father_text):
