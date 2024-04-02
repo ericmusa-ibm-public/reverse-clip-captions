@@ -26,6 +26,7 @@ Take the following text and change some of the words{strength}:
 
 3. "{orig_text}"'''
 
+
 mutate_params = {
     GenParams.DECODING_METHOD: 'sample',
     GenParams.MIN_NEW_TOKENS: 20,
@@ -36,7 +37,7 @@ mutate_params = {
 }
 
 
-def mutate(original_text, new_params={}, verbose=False, trim=2, extract=True):
+def mutate(original_text, new_params={}, verbose=False, trim=2, extract=True, min_length=10):
     params = dict(mutate_params)
     params.update(new_params)
     mutation_prompt = make_mutation_prompt(original_text)
@@ -46,7 +47,10 @@ def mutate(original_text, new_params={}, verbose=False, trim=2, extract=True):
     if trim > 0: 
         mutated_response = trim_incomplete_response(mutated_response, delim_follows_text=trim, strip_ws=False)
     if verbose: print('trimmed:', mutated_response)
-    return extract_strings(mutated_response) if extract else mutated_response
+    if extract:
+        mutated_response = extract_strings(mutated_response)
+        mutated_response = [_ for _ in mutated_response if len(_) >= min_length]
+    return mutated_response
 
 
 if __name__ == '__main__':

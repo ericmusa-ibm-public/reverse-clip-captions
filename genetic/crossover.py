@@ -31,7 +31,7 @@ crossover_params = {
     GenParams.REPETITION_PENALTY: 1.1,
 }
 
-def crossover(mother_text, father_text, new_params={}, verbose=False, trim=2, extract=True):
+def crossover(mother_text, father_text, new_params={}, verbose=False, trim=2, extract=True, min_length=10):
     params = dict(crossover_params)
     params.update(new_params)
     crossover_prompt = make_crossover_prompt(mother_text, father_text)
@@ -41,7 +41,10 @@ def crossover(mother_text, father_text, new_params={}, verbose=False, trim=2, ex
     if trim > 0: 
         crossover_response = trim_incomplete_response(crossover_response, delim_follows_text=trim, strip_ws=False)
     if verbose: print('trimmed:', crossover_response)
-    return extract_strings(crossover_response) if extract else crossover_response
+    if extract:
+        crossover_response = extract_strings(crossover_response)
+        crossover_response = [_ for _ in crossover_response if len(_) >= min_length]
+    return crossover_response
 
 
 if __name__ == '__main__':
