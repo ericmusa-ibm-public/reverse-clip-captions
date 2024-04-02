@@ -1,0 +1,12 @@
+faiss-cpu==1.8.0
+ibm-watson-machine-learning==1.0.352
+ipykernel==6.29.3
+ipython==8.22.2
+jupyter_client==8.6.1
+jupyter_core==5.7.2
+langchain==0.1.12
+python-dotenv==1.0.1
+sentence-transformers==2.5.1
+scikit-image
+open_clip_torch
+matplotlib

@@ -1,5 +1,5 @@
 from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
-from sampling import generate_text, trim_incomplete_response, extract_strings
+from genetic import generate_text, trim_incomplete_response, extract_strings
 
 # STRONG = 'Take the following text and change it as much as possible while retaining the same meaning.'
 # MEDIUM = 'Take the following text and change some of the words to rephrase the same meaning.'
@@ -53,7 +53,7 @@ if __name__ == '__main__':
     import dotenv
     dotenv.load_dotenv()
     
-    from sampling import ask
+    from genetic import ask
     
     question = 'why does the sea sometimes glow around me when I wade through it at night?'
     print(question)
