@@ -72,23 +72,29 @@ def similarities_heat_map(texts, images):
 if __name__ == "__main__":
     import os
 
-    image_paths = [os.path.join('images', _) for _ in os.listdir('images')]
+    OCR_TESTING = True
+
+    if OCR_TESTING:
+        image_root = os.path.join('images', 'OCR testing')
+    else:
+        image_root = 'images'
+
+    image_paths = [os.path.join(image_root, _) for _ in os.listdir(image_root) if _.endswith('.png')]
     images_dict = {_: Image.open(_).convert("RGB") for _ in image_paths}
 
     images = []
     texts = []
 
     for fname, image in images_dict.items():
-        if 'ocr' in fname or 'japan' in fname:
-            # continue
-            images.append(image)
-            # texts.append(os.path.split(fname)[1].split('.')[0])
+        images.append(image)
+        if not OCR_TESTING:
+            texts.append(os.path.split(fname)[1].split('.')[0])
 
-
-    texts += \
-        ['red', 'circle'] + \
-        ['turtle', 'octagon', 'triangle']  # + \
-        # ['quantum mechanics', '40%', 'percentage']  # + \
-        # ['quantum mechanics', 'gown', '40%', 'percentage', '30%', '5 L', 'liters'] + \
+    if OCR_TESTING:
+        texts += \
+            ['red', 'circle'] + \
+            ['turtle', 'octagon', 'triangle']  # + \
+            # ['quantum mechanics', '40%', 'percentage']  # + \
+            # ['quantum mechanics', 'gown', '40%', 'percentage', '30%', '5 L', 'liters'] + \
     similarities_heat_map(texts, images)
     plt.show()

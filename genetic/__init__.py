@@ -77,32 +77,79 @@ def trim_incomplete_response(
         cutoff_str='...', 
         strip_ws=True,
         ):
+
     trimmed = str(response)
-    if not response.endswith(delimiters):
+    # copy the response, allowing indexing past the cutoff for the trailing quote
+
+    if not response.endswith(delimiters):  
+        # if the response already ends with a delimiter, all good, skip to end and return original response
+
         assert delim_follows_text < len(response), f'delim_follows_text ({delim_follows_text}) must be '
+        # `delim_follows_text` must be less than the length of the response
+        # if it were longer, we would attempt to slice the response string past its length
+
         i = len(response)
         while i > 0:
-            i -= 1
-            if response[i] in delimiters:
+        # now we iterate backwards through the response, doing checks as nec. acc. to the function args
+            i -= 1  
+            # decrement first because index of len(response) is out of bounds
+
+            if response[i] in delimiters:  
+            # check if this char is in delimiters
+
                 if delim_follows_text > 0:
+                # if so, then if we need to also check if preceding characters are text...
+                    
                     if not all(char in string.ascii_letters for char in response[i-delim_follows_text:i]):
                         continue
+                    # then check if the preceding N=`delim_follow_text` characters are letters. if not, skip to next i
+
                 trimmed = response[:i+1]
                 break
+                # here, the response[i] is a delimiter, its preceding characters are letters (if req.'d)
+                # set `trimmed`, the output string, to `response` up to and including response[i]
+
             elif response[i] == ',' and comma_is_delimiter:
+            # if response[i] is not a regular delim character but we want to treat commas as a delimiter...
+
                 trimmed = response[:i] + cutoff_str
                 break
+                # then `trimmed` is set up to But Not Including the "," response[i], 
+                # and the `cutoff_str` is appended to the end
+
         if include_quotes:
+            # if responses will be sentences in quotes, then we want to add back 
+            # quotes immediately following a delimiter that were trimmed off
             if response[i+1] == "'":
                 trimmed += "'"
             elif response[i+1] == "\"":
                 trimmed += "\""
+
         if strip_ws:
+            # strip white space and newline characters
             trimmed = trimmed.strip()
+
     return trimmed
 
 
 def extract_strings(mutated_text):
+    '''
+    extracts strings in the following format:
+
+        """
+        1. "A black horse on a white background." + "A silver fish traveling upstream."
+        - "The silhouette of a fish over a silver background." 
+        - "A black horse and silver fish." 
+        - "A dark colored horse traveling up a stream."
+        - "A black fish swimming up a white river."
+
+        """
+
+        This would return:
+        ['The silhouette of a fish over a silver background.', 
+        'A black horse and silver fish.', 'A dark colored horse traveling up a stream.', 
+        'A black fish swimming up a white river.',]
+    '''
     return re.findall(r"(\w+[\w| |']*.?)", mutated_text)
 
 
